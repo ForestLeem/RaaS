@@ -337,10 +337,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     #  menu bar function begin
     def open_file(self):
-        open_path, ok = QtWidgets.QFileDialog.getOpenFileName(None, "open", "/", "json(*.json)")
-        if ok:
-            # to do
-            pass
+        QtWidgets.QMessageBox.information(None, "info", "need to be implement")
+        # open_path, ok = QtWidgets.QFileDialog.getOpenFileName(None, "open", "/", "json(*.json)")
+        # if ok:
+        #     # to do
+        #     pass
         return
 
     def save_file(self):
