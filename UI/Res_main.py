@@ -89,6 +89,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.frame_interface.setObjectName("frame_interface")
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         MainWindow.setCentralWidget(self.centralwidget)
+
+        # menu bar
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 980, 18))
         self.menubar.setObjectName("menubar")
@@ -106,11 +108,26 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.actionOpen.setObjectName("actionOpen")
         self.actionSave = QtWidgets.QAction(MainWindow)
         self.actionSave.setObjectName("actionSave")
+        self.actionResource = QtWidgets.QAction(MainWindow)
+        self.actionResource.setObjectName("actionResource")
+        self.actionResource.setCheckable(True)
+        self.actionResource.setChecked(True)                 # default
+        self.actionResToAsset = QtWidgets.QAction(MainWindow)
+        self.actionResToAsset.setObjectName("actionResToAsset")
+        self.actionResToAsset.setCheckable(True)
+        self.actionAssetToService = QtWidgets.QAction(MainWindow)
+        self.actionAssetToService.setObjectName("actionAssetToService")
+        self.actionAssetToService.setCheckable(True)
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionSave)
+        self.menuMode.addAction(self.actionResource)
+        self.menuMode.addAction(self.actionResToAsset)
+        self.menuMode.addAction(self.actionAssetToService)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuMode.menuAction())
+        # menu bar
+
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
         self.textEdit.setObjectName("textEdit")
@@ -138,7 +155,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "ResEditor"))
         self.label_resource.setText(_translate("MainWindow", "Resource_uid:"))
         self.label_provider.setText(_translate("MainWindow", "Provider_uid:"))
         self.label_context.setText(_translate("MainWindow", "@context    http://www.w3.org/ns/resource.jsonld"))
@@ -152,6 +169,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.actionNew.setText(_translate("MainWindow", "New"))
         self.actionOpen.setText(_translate("MainWindow", "Open"))
         self.actionSave.setText(_translate("MainWindow", "Save"))
+
+        self.actionResource.setText(_translate("MainWindow", "ResEditor"))
+        self.actionResToAsset.setText(_translate("MainWindow", "R-A projection"))
+        self.actionAssetToService.setText(_translate("MainWindow", "A-S projection"))
 
 
     def bind_function(self):
