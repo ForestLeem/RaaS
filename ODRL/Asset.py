@@ -1,5 +1,5 @@
-from Constraint import *
-from helper import *
+from ODRL.Constraint import *
+from ODRL.helper import *
 
 
 class Asset(object):

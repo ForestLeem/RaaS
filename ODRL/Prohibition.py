@@ -1,8 +1,8 @@
-from Action import *
-from Asset import *
-from Party import *
-from Constraint import *
-from helper import *
+from ODRL.Action import *
+from ODRL.Asset import *
+from ODRL.Party import *
+from ODRL.Constraint import *
+from ODRL.helper import *
 
 
 class Prohibition(object):

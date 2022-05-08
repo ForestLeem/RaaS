@@ -13,6 +13,7 @@ from UI import FnUI
 from UI import InterfaceUI
 from UI import dialog_fnchar
 from UI import dialog_interface
+from UI import RtoA
 from Resource import Resource as Res
 from Resource import Provider as Provider
 from Resource import Func_Char as Func_Char
@@ -22,10 +23,16 @@ import json
 
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, MainWindow):
-        super(Ui_MainWindow, self).__init__(MainWindow)
+    def __init__(self):
+        super(Ui_MainWindow, self).__init__()
+
+    def setup_UI(self, MainWindow, ResEditor_UI, RtoA_UI):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(980, 620)
+
+        self.MainWindow = MainWindow
+
+        self.RtoA_UI = RtoA_UI
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -181,6 +188,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.actionNew.triggered.connect(self.new_file)
         self.actionSave.triggered.connect(self.save_file)
         self.actionOpen.triggered.connect(self.open_file)
+        self.actionResource.triggered.connect(self.change_to_ResEditor_UI)
+        self.actionResToAsset.triggered.connect(self.change_to_R_A_UI)
+
 
     def add_fnchar(self):
         dialog1 = QtWidgets.QDialog()
@@ -358,7 +368,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                                                      PyQt5.QtWidgets.QMessageBox.Yes | PyQt5.QtWidgets.QMessageBox.No,
                                                      PyQt5.QtWidgets.QMessageBox.No)
 
-        if (reply):
+        if reply == QtWidgets.QMessageBox.Yes:
             self.lineEdit_resource.setText("")
             self.lineEdit_provider.setText("")
             for tmp in self.interface_list:
@@ -367,14 +377,29 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 tmp.safe_delete()
             self.textEdit.clear()
 
+    def change_to_R_A_UI(self):
+        reply = QtWidgets.QMessageBox.question(None, "Warning", "Are you sure to change to MODE R-A projection?\n "
+                                                                "(make sure you have save your file!)",
+                                               QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            self.RtoA_UI.setup_UI(self.MainWindow, self, self.RtoA_UI)
+        else:
+            self.actionResToAsset.setChecked(False)
+
+    def change_to_ResEditor_UI(self):
+        self.actionResource.setChecked(True)
+
     #  menu bar function  end
 
 # test
-# if __name__ == "__main__":
-#     import sys
-#     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
-#     app = QtWidgets.QApplication(sys.argv)
-#     MainWindow = QtWidgets.QMainWindow()
-#     ui = Ui_MainWindow(MainWindow)
-#     MainWindow.show()
-#     sys.exit(app.exec_())
+if __name__ == "__main__":
+    import sys
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    R_A_ui = RtoA.Ui_MainWindow()
+    ui.setup_UI(MainWindow, ui, R_A_ui)
+    MainWindow.show()
+    sys.exit(app.exec_())

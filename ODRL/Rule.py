@@ -1,11 +1,11 @@
-from Permission import *
-from Prohibition import *
-from Duty import *
-from Action import *
-from Asset import *
-from Party import *
-from Constraint import *
-from helper import *
+from ODRL.Permission import *
+from ODRL.Prohibition import *
+from ODRL.Duty import *
+from ODRL.Action import *
+from ODRL.Asset import *
+from ODRL.Party import *
+from ODRL.Constraint import *
+from ODRL.helper import *
 
 
 # duty_name_ = {"permission": "duty", "prohibition": "remedy", "obligation": "consequence"}

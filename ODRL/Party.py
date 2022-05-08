@@ -1,4 +1,4 @@
-from Constraint import *
+from ODRL.Constraint import *
 
 
 class Party(object):

@@ -1,15 +1,15 @@
-import ODRL.Party as Party
-import ODRL.Asset as Asset
-import ODRL.Action as Action
-import ODRL.Constraint as Constraint
-import ODRL.Policy as Policy
-import ODRL.Rule as Rule
-import Resource.Provider as Provider
-import Resource.Resource as Res
-import Resource.Interface as Interface
-import Resource.Func_Char as Func_Char
-import Resource.Non_Func_Char as Non_Func_Char
-import Resource.Operation as Operation
+from ODRL import Party
+from ODRL import Asset
+from ODRL import Action
+from ODRL import Constraint
+from ODRL import Policy
+from ODRL import Rule
+from Resource import Provider
+from Resource import Resource as Res
+from Resource import Interface
+from Resource import Func_Char
+from Resource import Non_Func_Char
+from Resource import Operation
 
 
 def Provider2Party_c(_provider):
