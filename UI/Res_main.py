@@ -358,6 +358,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         save_path, ok = QtWidgets.QFileDialog.getSaveFileName(None, "save", "/", "json(*.json)")
 
         if ok:
+            self.generate_resource(["generate"])
             with open(save_path, "w") as file:
                 file.write(self.textEdit.toPlainText())
         return
