@@ -43,3 +43,24 @@ class Resource:
             tmp_interface_list.append(tmp.to_dict())
         result["interface"] = tmp_interface_list
         return result
+
+    def to_resource(self, dict_data):
+        # Turn dict into class
+        self.uid = dict_data["uid"]
+        self.provider.uid = dict_data["provider"]
+
+        # add fnChar
+        tmp_fnchar_list = dict_data["Functional_Characteristic"]
+        for tmp_fnchar in tmp_fnchar_list:
+            tmp_fnchar_class = FnChar()
+            tmp_fnchar_class.f_type = tmp_fnchar["f_type"]
+            if "description" in tmp_fnchar.keys():
+                tmp_fnchar_class.description = tmp_fnchar["description"]
+            self.add_FnChar(tmp_fnchar_class)
+
+        # add interface
+        tmp_interface_list = dict_data["interface"]
+        for tmp_interface in tmp_interface_list:
+            tmp_interface_class = Interface()
+            tmp_interface_class.to_interface(tmp_interface)
+            self.add_interface(tmp_interface_class)

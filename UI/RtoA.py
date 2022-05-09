@@ -13,6 +13,18 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from ResToAsset import RaaA
 from UI import confirm_rule
 from UI import confirm_type
+from ODRL import Party
+from ODRL import Asset
+from ODRL import Action
+from ODRL import Constraint
+from ODRL import Policy
+from ODRL import Rule
+from Resource import Provider
+from Resource import Resource as Res
+from Resource import Interface
+from Resource import Func_Char
+from Resource import Non_Func_Char
+from Resource import Operation
 
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
@@ -53,15 +65,15 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.txt_Asset = QtWidgets.QTextEdit(self.scrollAreaWidgetContents_A)
         self.txt_Asset.setGeometry(QtCore.QRect(0, 0, 471, 521))
         self.txt_Asset.setObjectName("txt_Asset")
-        self.btn_previous = QtWidgets.QPushButton(self.scrollAreaWidgetContents_A)
-        self.btn_previous.setGeometry(QtCore.QRect(60, 520, 101, 31))
-        self.btn_previous.setObjectName("btn_previous")
-        self.btn_next = QtWidgets.QPushButton(self.scrollAreaWidgetContents_A)
-        self.btn_next.setGeometry(QtCore.QRect(210, 520, 101, 31))
-        self.btn_next.setObjectName("btn_next")
-        self.page = QtWidgets.QLabel(self.scrollAreaWidgetContents_A)
-        self.page.setGeometry(QtCore.QRect(160, 520, 51, 31))
-        self.page.setObjectName("page")
+        # self.btn_previous = QtWidgets.QPushButton(self.scrollAreaWidgetContents_A)
+        # self.btn_previous.setGeometry(QtCore.QRect(60, 520, 101, 31))
+        # self.btn_previous.setObjectName("btn_previous")
+        # self.btn_next = QtWidgets.QPushButton(self.scrollAreaWidgetContents_A)
+        # self.btn_next.setGeometry(QtCore.QRect(210, 520, 101, 31))
+        # self.btn_next.setObjectName("btn_next")
+        # self.page = QtWidgets.QLabel(self.scrollAreaWidgetContents_A)
+        # self.page.setGeometry(QtCore.QRect(160, 520, 51, 31))
+        # self.page.setObjectName("page")
         self.btn_sava = QtWidgets.QPushButton(self.scrollAreaWidgetContents_A)
         self.btn_sava.setGeometry(QtCore.QRect(370, 520, 101, 31))
         self.btn_sava.setObjectName("btn_sava")
@@ -111,9 +123,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.btn_R2A.setText(_translate("MainWindow", "Res \n"
 "to \n"
 " Asset"))
-        self.btn_previous.setText(_translate("MainWindow", "<previous asset"))
-        self.btn_next.setText(_translate("MainWindow", "<next asset"))
-        self.page.setText(_translate("MainWindow", "  0/0"))
+        # self.btn_previous.setText(_translate("MainWindow", "<previous asset"))
+        # self.btn_next.setText(_translate("MainWindow", "<next asset"))
+        # self.page.setText(_translate("MainWindow", "  0/0"))
         self.btn_sava.setText(_translate("MainWindow", "Save"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuMode.setTitle(_translate("MainWindow", "Mode"))
@@ -125,6 +137,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def bind_function(self):
         self.btn_R2A.clicked.connect(self.Res_To_Asset)
+        self.btn_sava.clicked.connect(self.save_Asset)
         self.actionR_A_projection.triggered.connect(self.change_to_R_A_UI)
         self.actionResEditor.triggered.connect(self.change_to_ResEditor_UI)
         self.actionA_S_projection.triggered.connect(self.change_to_A_S_UI)
@@ -182,26 +195,96 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     # menubar function END
 
+    def save_Asset(self):
+        save_path, ok = QtWidgets.QFileDialog.getSaveFileName(None, "save", "/", "json(*.json)")
+        if ok != "":
+            try:
+                with open(save_path, "w") as f:
+                    f.write(self.txt_Asset.toPlainText())
+
+            except Exception as e:
+                print(e)
 
     def Res_To_Asset(self):
+
+        # Resource to Asset
+
+        if self.txt_Res.toPlainText() == "":
+            return
         _type = self.confirm_type_dia()
+        tmp_dict_data = json.loads(self.txt_Res.toPlainText())
 
         # let user decide the type of policy
-        if _type != None:
-            print(_type)
+        try:
+            if _type != None:
+                _resource = Res.Resource()
+                _resource.to_resource(tmp_dict_data)
+
+                _policy = Policy.Policy(_type, "http://example.com/policy:01")     # default
+
+                # σ(res: C.Provider) → ass: C.Party
+                assigner_party = RaaA.Provider2Party_c(_resource.provider)
+                _policy.add_party(assigner_party)
+
+                # generate Rule
+                # σ(res:C.Interface) → ass:C.Asset
+                for tmp_interface in _resource.interface_list:
+                    # σ(res:R.operation(C.Interface,C.Operation)) →
+                    # ass:R.action(C.Rule,C.Action) ∪ ass:R.asset(C.Rule,C.Asset)
+
+                    tmp_rule_list = []
+
+                    # one rule must have one action
+                    for tmp_operation in tmp_interface.operation_list:
+                        # rule
+                        tmp_rule = Rule.Rule("permission")  # default
+                        # σ(res:C.Operation) → ass:C.Action
+                        tmp_action = RaaA.Operation2Action_c(tmp_operation)
+                        tmp_rule.action = tmp_action
+
+                        # σ(res:R.non_functional_char(C.Operation,C.Non Functional Characteristic)) →
+                        # ass:R.refinement(C.Action,C.Constraint)
+                        for tmp_non_char in tmp_operation.NonFnChar_list:
+                            tmp_refinement = RaaA.Non_Func_Char2Constraint_c(tmp_non_char, "refinement")
+                            tmp_action.add_refinement(tmp_refinement)
+
+                        # σ(res:R.non functional char(C.Interface,C.Non Functional Characteristic)) →
+                        # ass:R.constraint(C.Rule,C.Constraint) ∪ ass:R.asset(C.Rule,C.Asset)
+                        tmp_asset = RaaA.Interface2Asset_c(tmp_interface)
+                        tmp_rule.add_asset(tmp_asset)
+                        for tmp_non_char in tmp_interface.NonFnChar_list:
+                            tmp_constraint = RaaA.Non_Func_Char2Constraint_c(tmp_non_char, "constraint")
+                            tmp_rule.add_constraint(tmp_constraint)
+                        rule_type = self.confirm_rule_dia(json.dumps(tmp_rule.to_dict(), indent=2))
+
+                        tmp_rule.type = rule_type
+                        if rule_type == "permission":
+                            _policy.add_permission(tmp_rule)
+                        elif rule_type == "prohibition":
+                            _policy.add_prohibition(tmp_rule)
+                        elif rule_type == "obligation":
+                            _policy.add_obligation(tmp_rule)
+
+                self.txt_Asset.setText(json.dumps(_policy.to_dict(), indent=2))
+
+        except Exception as e:
+            print(e)
+
 
         return
 
     def confirm_type_dia(self):
         dialog1 = QtWidgets.QDialog()
         dialog1.setWindowModality(QtCore.Qt.ApplicationModal)
-        confiretype_dia = confirm_type.Ui_Dialog(dialog1)
-        confiretype_dia.signal1.connect(self.process_type)
-        self.test = dialog1.exec_()
-        return confiretype_dia.get_result(self.test)
+        confirm_type_dia = confirm_type.Ui_Dialog(dialog1)
+        result = dialog1.exec_()
+        return confirm_type_dia.get_result(result)
 
-    def confirm_rule(self):
+    def confirm_rule_dia(self, txt):
         dialog1 = QtWidgets.QDialog()
         dialog1.setWindowModality(QtCore.Qt.ApplicationModal)
-        pass
+        confirm_rule_dia = confirm_rule.Ui_Dialog(dialog1)
+        confirm_rule_dia.textEdit.setText(txt)
+        result = dialog1.exec_()
+        return confirm_rule_dia.get_result(result)[0]
 

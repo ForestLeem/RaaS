@@ -47,7 +47,7 @@ def Func_Char2None_c(_func_char):
 def Non_Func_Char2Constraint_c(_non_func_char, _type):
     if isinstance(_non_func_char, Non_Func_Char.NonFnChar):
         new_constraint = Constraint.Constraint(_type)
-        new_constraint.leftOperand = "anyuid"               # need to be setting
+        new_constraint.leftOperand = "any uid(need to setting)"               # need to be setting
         new_constraint.operator = ""                        # need to be setting
         new_constraint.rightOperand = _non_func_char.value
         new_constraint.unit = _non_func_char.dataType

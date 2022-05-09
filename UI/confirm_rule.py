@@ -43,10 +43,13 @@ class Ui_Dialog(QtCore.QObject):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        Dialog.setWindowTitle(_translate("Dialog", "confirm rule"))
         self.label.setText(_translate("Dialog", "Please tell us the following rule belong to which class. \n"
 "      Permission, Prohibition or Obligation?"))
         self.comboBox.setItemText(0, _translate("Dialog", "permission"))
         self.comboBox.setItemText(1, _translate("Dialog", "prohibition"))
         self.comboBox.setItemText(2, _translate("Dialog", "obligation"))
 
+    def get_result(self, result):
+        if result:
+            return [self.comboBox.currentText(), self.textEdit.toPlainText()]

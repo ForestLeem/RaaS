@@ -34,3 +34,42 @@ class Interface:
             tmp_operation_list.append(tmp.to_dict())
         result["operation"] = tmp_operation_list
         return result
+
+    def to_interface(self, dict_data):
+        # Turn dict into class
+        self.uid = dict_data["uid"]
+
+        if "description" in dict_data.keys():
+            self.description = dict_data["description"]
+
+        # add Non_fnchar
+        tmp_non_fnchar_list = dict_data["Non_Functional_Characteristic"]
+        for tmp_non_fnchar in tmp_non_fnchar_list:
+            if "description" in tmp_non_fnchar.keys():
+                tmp_non_fnchar_class = NonFnChar(tmp_non_fnchar["name"], tmp_non_fnchar["value"],
+                                                 tmp_non_fnchar["dataType"], tmp_non_fnchar["description"])
+            else:
+                tmp_non_fnchar_class = NonFnChar(tmp_non_fnchar["name"], tmp_non_fnchar["value"],
+                                                 tmp_non_fnchar["dataType"])
+            self.add_NonFnChar(tmp_non_fnchar_class)
+
+        # add operation
+        tmp_operation_list = dict_data["operation"]
+        for tmp_operation in tmp_operation_list:
+            tmp_operation_class = Operation()
+            tmp_operation_class.uid = tmp_operation["uid"]
+            if "description" in tmp_operation.keys():
+                tmp_operation_class.description = tmp_operation["description"]
+
+            # add Non_fnchar in operation
+            tmp_non_fnchar_list = tmp_operation["Non_Functional_Characteristic"]
+            for tmp_non_fnchar in tmp_non_fnchar_list:
+                if "description" in tmp_non_fnchar.keys():
+                    tmp_non_fnchar_class = NonFnChar(tmp_non_fnchar["name"], tmp_non_fnchar["value"],
+                                                     tmp_non_fnchar["dataType"], tmp_non_fnchar["description"])
+                else:
+                    tmp_non_fnchar_class = NonFnChar(tmp_non_fnchar["name"], tmp_non_fnchar["value"],
+                                                     tmp_non_fnchar["dataType"])
+                tmp_operation_class.add_NonFnChar(tmp_non_fnchar_class)
+
+            self.add_operation(tmp_operation_class)

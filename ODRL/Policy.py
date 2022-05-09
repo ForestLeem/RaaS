@@ -2,6 +2,7 @@ from ODRL.Action import *
 from ODRL.Asset import *
 from ODRL.Party import *
 from ODRL.Constraint import *
+from ODRL.Rule import *
 from ODRL.Permission import *
 from ODRL.Prohibition import *
 from ODRL.Duty import *
@@ -25,17 +26,17 @@ class Policy(object):
 
     def add_permission(self, _permission):
         # add permission
-        if isinstance(_permission, Permission):
+        if isinstance(_permission, Rule):
             self.permission.append(_permission)
 
     def add_prohibition(self, _prohibition):
         # add prohibition
-        if isinstance(_prohibition, Prohibition):
+        if isinstance(_prohibition, Rule):
             self.prohibition.append(_prohibition)
 
     def add_obligation(self, _obligation):
         # add obligation (duty)
-        if isinstance(_obligation, Duty):
+        if isinstance(_obligation, Rule):
             self.obligation.append(_obligation)
 
     def add_party(self, _party):
@@ -67,10 +68,9 @@ class Policy(object):
         if len(self.asset_list) == 0:
             # no asset
             pass
-        if len(self.asset_list) == 1:
+        elif len(self.asset_list) == 1:
             # 1 asset (target)
             merge_dict(self.asset_list[0].to_dict(), result)
-
         else:
             # 2 or more assets (targets)
             tmp_asset = []
