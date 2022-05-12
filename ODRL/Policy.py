@@ -23,6 +23,7 @@ class Policy(object):
         self.permission = []             # [0 ... *]
         self.prohibition = []            # [0 ... *]
         self.obligation = []             # [0 ... *]
+        self.constraint_list = []        # [0 ... *]
 
     def add_permission(self, _permission):
         # add permission
@@ -58,6 +59,10 @@ class Policy(object):
     def add_asset(self, _asset):
         if isinstance(_asset, Asset):
             self.asset_list.append(_asset)
+
+    def add_constraint(self, _constraint):
+        if isinstance(_constraint, Constraint):
+            self.constraint_list.append(_constraint)
 
     def to_dict(self):
         result = {"@context": self.context, "@type": self.type, "uid": self.uid}
@@ -110,23 +115,16 @@ class Policy(object):
                 tmp_obligation = add_dict(tmp_obligation, self.obligation[i].to_dict())
             merge_dict(tmp_obligation, result)
 
+        # constraint
+        if len(self.constraint_list) == 0:
+            pass
+        else:
+            tmp_constraint = self.constraint_list[0].to_dict()
+            for i in range(1, len(self.constraint_list)):
+                tmp_constraint = add_dict(tmp_constraint, self.constraint_list[i].to_dict())
+            merge_dict(tmp_constraint, result)
+
         return result
 
 
-# test = Policy("Agreement", "http://example.com/policy:01")
-# a = Party(1, "http://example.com/provider:01")
-# c = Party(2, "http://example.com/client1/")
-# b = Permission()
-# b.add_party(a)
-# b.add_party(c)
-# tmp2 = Asset("http://example.com/document:1234")
-# tmp1 = Constraint(1)
-# b.add_asset(tmp2)
-# print(tmp1.to_dict())
-# b.add_constraint(tmp1)
-# test.add_permission(b)
-# mm = test.to_dict()
-#
-# print(json.dumps(mm, indent=2))
-#
 

@@ -10,6 +10,7 @@ from Resource import Interface
 from Resource import Func_Char
 from Resource import Non_Func_Char
 from Resource import Operation
+import json
 
 
 def Provider2Party_c(_provider):
@@ -117,7 +118,5 @@ def Resource2Asset(_resource):
                 tmp_policy.add_permission(tmp_r)
 
         return result_policy
-
-
 
 
