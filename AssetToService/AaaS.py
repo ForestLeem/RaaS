@@ -92,7 +92,11 @@ def Asset2Service(_policy):
                 # Service.operation ← Operation
                 tmp_operation = Action2Operation_c(tmp_action)
                 tmp_service.add_operation(tmp_operation)
-            for tmp_constraint in
-
-
-
+            for tmp_constraint in _policy.constraint_list:
+                # Service.qos ← QoS
+                tmp_qos = Constraint2QoS_c(tmp_constraint)
+                tmp_service.add_qos(tmp_qos)
+                # add QoS for each sla in service
+                for tmp_sla in tmp_service.sla_list:
+                    tmp_sla.add_qos(tmp_qos)
+    return result_service_list
