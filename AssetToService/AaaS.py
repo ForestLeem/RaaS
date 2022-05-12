@@ -60,7 +60,39 @@ def Constraint2QoS_c(_constraint):
         return new_QoS
 
 
-def Asset2Service(_asset):
-    if isinstance(_asset, Asset.Asset):
+def Asset2Service(_policy):
+    if isinstance(_policy, Policy.Policy):
+        result_service_list = []
+        # generate service for each asset
+        for tmp_asset in _policy.asset_list:
+            # σ(ass:R.asset(C.Policy,C.Asset)) → ser:R.sla(C.Service,C.SLA)
+            tmp_service = Asset2Service_c(tmp_asset)
+            tmp_sla = Policy2SLA_c(_policy)
+            tmp_service.add_sla(tmp_sla)
+            result_service_list.append(tmp_service)
+
+        # update service
+        for tmp_service in result_service_list:
+            for tmp_party in _policy.party_list:
+                # σ(ass:R.party(C.Policy,C.Party)) → ser:R.provider(C.SLA,C.Provider) ∪
+                # ser:R.provider(C.Service,C.Provider)
+                if tmp_party.function == "assigner":
+                    tmp_provider = Party2Provider_c(tmp_party)
+                    tmp_service.provider = tmp_provider
+                    # add provider for each sla in service
+                    for tmp_sla in tmp_service.sla_list:
+                        tmp_sla.setProvider(tmp_provider)
+                if tmp_party.function == "assignee":
+                    # SLA.consumer ← Consumer
+                    tmp_consumer = Party2Consumer_c(tmp_party)
+                    # add consumer for each sla in service
+                    for tmp_sla in tmp_service.sla_list:
+                        tmp_sla.set_consumer(tmp_consumer)
+            for tmp_action in _policy.action:
+                # Service.operation ← Operation
+                tmp_operation = Action2Operation_c(tmp_action)
+                tmp_service.add_operation(tmp_operation)
+            for tmp_constraint in
+
 
 
