@@ -31,12 +31,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
 
-    def setup_UI(self, MainWindow, ResEditor, RtoAUI):
+    def setup_UI(self, MainWindow, ResEditor, RtoAUI, AtoSUI):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(980, 620)
 
         self.MainWindow = MainWindow
         self.ResEditor = ResEditor
+        self.AtoS_UI = AtoSUI
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -49,11 +50,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.scrollAreaWidgetContents_R.setGeometry(QtCore.QRect(0, 0, 470, 570))
         self.scrollAreaWidgetContents_R.setObjectName("scrollAreaWidgetContents_R")
         self.txt_Res = QtWidgets.QTextEdit(self.scrollAreaWidgetContents_R)
-        self.txt_Res.setGeometry(QtCore.QRect(0, 0, 411, 561))
+        self.txt_Res.setGeometry(QtCore.QRect(0, 20, 411, 541))
         self.txt_Res.setObjectName("txt_Res")
         self.btn_R2A = QtWidgets.QPushButton(self.scrollAreaWidgetContents_R)
         self.btn_R2A.setGeometry(QtCore.QRect(410, 220, 65, 81))
         self.btn_R2A.setObjectName("btn_R2A")
+        self.label = QtWidgets.QLabel(self.scrollAreaWidgetContents_R)
+        self.label.setGeometry(QtCore.QRect(0, 0, 411, 16))
+        self.label.setObjectName("label")
         self.scrollArea_R.setWidget(self.scrollAreaWidgetContents_R)
         self.gridLayout.addWidget(self.scrollArea_R, 0, 0, 1, 1)
         self.scrollArea_A = QtWidgets.QScrollArea(self.centralwidget)
@@ -63,7 +67,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.scrollAreaWidgetContents_A.setGeometry(QtCore.QRect(0, 0, 470, 570))
         self.scrollAreaWidgetContents_A.setObjectName("scrollAreaWidgetContents_A")
         self.txt_Asset = QtWidgets.QTextEdit(self.scrollAreaWidgetContents_A)
-        self.txt_Asset.setGeometry(QtCore.QRect(0, 0, 471, 521))
+        self.txt_Asset.setGeometry(QtCore.QRect(0, 20, 471, 501))
         self.txt_Asset.setObjectName("txt_Asset")
         # self.btn_previous = QtWidgets.QPushButton(self.scrollAreaWidgetContents_A)
         # self.btn_previous.setGeometry(QtCore.QRect(60, 520, 101, 31))
@@ -77,6 +81,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.btn_sava = QtWidgets.QPushButton(self.scrollAreaWidgetContents_A)
         self.btn_sava.setGeometry(QtCore.QRect(370, 520, 101, 31))
         self.btn_sava.setObjectName("btn_sava")
+        self.label_2 = QtWidgets.QLabel(self.scrollAreaWidgetContents_A)
+        self.label_2.setGeometry(QtCore.QRect(0, 0, 411, 16))
+        self.label_2.setObjectName("label_2")
         self.scrollArea_A.setWidget(self.scrollAreaWidgetContents_A)
         self.gridLayout.addWidget(self.scrollArea_A, 0, 1, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -126,6 +133,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # self.btn_previous.setText(_translate("MainWindow", "<previous asset"))
         # self.btn_next.setText(_translate("MainWindow", "<next asset"))
         # self.page.setText(_translate("MainWindow", "  0/0"))
+        self.label.setText(_translate("MainWindow", "Resource"))
+        self.label_2.setText(_translate("MainWindow", "Asset"))
         self.btn_sava.setText(_translate("MainWindow", "Save"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuMode.setTitle(_translate("MainWindow", "Mode"))
@@ -154,17 +163,19 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                                                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
                                                QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
-            self.ResEditor.setup_UI(self.MainWindow, self.ResEditor, self)
+            PyQt5.sip.delete(self.centralwidget)
+            self.ResEditor.setup_UI(self.MainWindow, self.ResEditor, self, self.AtoS_UI)
         else:
             self.actionResEditor.setChecked(False)
 
     def change_to_A_S_UI(self):
-        reply = QtWidgets.QMessageBox.question(None, "Warning", "Are you sure to change to MODE ResEditor?\n "
+        reply = QtWidgets.QMessageBox.question(None, "Warning", "Are you sure to change to MODE A-S projection?\n "
                                                                 "(make sure you have save your file!)",
                                                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
                                                QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
-            self.ResEditor.setup_UI(self.MainWindow, self.ResEditor, self)
+            PyQt5.sip.delete(self.centralwidget)
+            self.AtoS_UI.setup_UI(self.MainWindow, self.ResEditor, self, self.AtoS_UI)
         else:
             self.actionA_S_projection.setChecked(False)
 
@@ -176,9 +187,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                                                      QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
             tmpMainWindow = self.MainWindow
-            tmpRes = self.ResEditor
             PyQt5.sip.delete(self.centralwidget)
-            self.setup_UI(tmpMainWindow, tmpRes, self)
+            self.setup_UI(tmpMainWindow, self.ResEditor, self, self.AtoS_UI)
         else:
             return
 
@@ -269,7 +279,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         except Exception as e:
             print(e)
-
 
         return
 

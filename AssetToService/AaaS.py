@@ -81,7 +81,7 @@ def Asset2Service(_policy):
                     tmp_service.provider = tmp_provider
                     # add provider for each sla in service
                     for tmp_sla in tmp_service.sla_list:
-                        tmp_sla.setProvider(tmp_provider)
+                        tmp_sla.set_provider(tmp_provider)
                 if tmp_party.function == "assignee":
                     # SLA.consumer ← Consumer
                     tmp_consumer = Party2Consumer_c(tmp_party)
@@ -90,6 +90,11 @@ def Asset2Service(_policy):
                         tmp_sla.set_consumer(tmp_consumer)
             for tmp_action in _policy.action:
                 # Service.operation ← Operation
+                tmp_operation = Action2Operation_c(tmp_action)
+                tmp_service.add_operation(tmp_operation)
+            for tmp_permission in _policy.permission:
+                # Service.operation ← Operation
+                tmp_action = tmp_permission.action
                 tmp_operation = Action2Operation_c(tmp_action)
                 tmp_service.add_operation(tmp_operation)
             for tmp_constraint in _policy.constraint_list:

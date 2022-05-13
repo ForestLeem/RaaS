@@ -3,7 +3,7 @@ from ODRL.Constraint import *
 
 class Party(object):
     def __init__(self, _function, _uid):
-        self.function = _function       #  assigner,  assignee
+        self.function = _function       # assigner,  assignee
         self.uid = _uid
         # self.partOf = []
 

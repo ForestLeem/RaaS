@@ -15,6 +15,7 @@ from UI import InterfaceUI
 from UI import dialog_fnchar
 from UI import dialog_interface
 from UI import RtoA
+from UI import AtoS
 from Resource import Resource as Res
 from Resource import Provider as Provider
 from Resource import Func_Char as Func_Char
@@ -27,13 +28,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
 
-    def setup_UI(self, MainWindow, ResEditor_UI, RtoA_UI):
+    def setup_UI(self, MainWindow, ResEditor_UI, RtoA_UI, AtoS_UI):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(980, 620)
 
         self.MainWindow = MainWindow
 
         self.RtoA_UI = RtoA_UI
+        self.AtoS_UI = AtoS_UI
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -191,7 +193,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.actionOpen.triggered.connect(self.open_file)
         self.actionResource.triggered.connect(self.change_to_ResEditor_UI)
         self.actionResToAsset.triggered.connect(self.change_to_R_A_UI)
-
+        self.actionAssetToService.triggered.connect(self.change_to_A_S_UI)
 
     def add_fnchar(self):
         dialog1 = QtWidgets.QDialog()
@@ -199,7 +201,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         fnchar_dia = dialog_fnchar.Ui_Dialog(dialog1)
         fnchar_dia.signal1.connect(self.process_add_fnchar)
         dialog1.exec_()
-
 
     def add_interface(self):
         dialog1 = QtWidgets.QDialog()
@@ -441,7 +442,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 tmp.safe_delete()
             self.textEdit.clear()
             PyQt5.sip.delete(self.centralwidget)
-            self.setup_UI(self.MainWindow, self, self.RtoA_UI)
+            self.setup_UI(self.MainWindow, self, self.RtoA_UI, self.AtoS_UI)
 
     def change_to_R_A_UI(self):
         reply = QtWidgets.QMessageBox.question(None, "Warning", "Are you sure to change to MODE R-A projection?\n "
@@ -449,9 +450,21 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                                                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
                                                QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
-            self.RtoA_UI.setup_UI(self.MainWindow, self, self.RtoA_UI)
+            PyQt5.sip.delete(self.centralwidget)
+            self.RtoA_UI.setup_UI(self.MainWindow, self, self.RtoA_UI, self.AtoS_UI)
         else:
             self.actionResToAsset.setChecked(False)
+
+    def change_to_A_S_UI(self):
+        reply = QtWidgets.QMessageBox.question(None, "Warning", "Are you sure to change to MODE A-S projection?\n "
+                                                                "(make sure you have save your file!)",
+                                               QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            PyQt5.sip.delete(self.centralwidget)
+            self.AtoS_UI.setup_UI(self.MainWindow, self, self.RtoA_UI, self.AtoS_UI)
+        else:
+            self.actionAssetToService.setChecked(False)
 
     def change_to_ResEditor_UI(self):
         self.actionResource.setChecked(True)
@@ -466,6 +479,7 @@ if __name__ == "__main__":
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     R_A_ui = RtoA.Ui_MainWindow()
-    ui.setup_UI(MainWindow, ui, R_A_ui)
+    A_S_ui = AtoS.Ui_MainWindow()
+    ui.setup_UI(MainWindow, ui, R_A_ui, A_S_ui)
     MainWindow.show()
     sys.exit(app.exec_())

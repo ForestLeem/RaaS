@@ -25,3 +25,6 @@ class Asset(object):
 
             return {self.relation: result}
 
+    def to_class(self, dict_data):
+        pass
+

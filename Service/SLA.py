@@ -26,7 +26,7 @@ class SLA:
             self.qos_list.append(_qos)
 
     def to_dict(self):
-        result = {"idf": self.idf, "provider": self.provider.to_dict(), "consumer": self.consumer.to_dict()}
+        result = {"uid": self.uid, "provider": self.provider.to_dict(), "consumer": self.consumer.to_dict()}
 
         # qos class list -> qos dict list
         tmp_qos_list = []

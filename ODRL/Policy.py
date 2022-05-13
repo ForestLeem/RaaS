@@ -126,5 +126,51 @@ class Policy(object):
 
         return result
 
+    def to_policy(self, dict_data):
+        # Turn dict into class
+        self.uid = dict_data["uid"]
+        self.type = dict_data["@type"]
+        if "profile" in dict_data.keys():
+            self.profile = dict_data["profile"]
+
+        # asset
+        if "target" in dict_data.keys():
+            tmp_asset_list = dict_data["target"]
+            if type([]) == type(tmp_asset_list):
+                for i in tmp_asset_list:
+                    new_asset = Asset("target", tmp_asset_list[i])
+                    self.add_asset(new_asset)
+            else:
+                self.add_asset(Asset("target", tmp_asset_list))
+
+        # party
+        if "assignee" in dict_data.keys():
+            _assignee = Party("assignee", dict_data["assignee"])
+            self.add_party(_assignee)
+
+        if "assigner" in dict_data.keys():
+            _assigner = Party("assigner", dict_data["assigner"])
+            self.add_party(_assigner)
+
+        # permission
+        if "permission" in dict_data.keys():
+            for i in dict_data["permission"]:
+                tmp_rule = Rule("permission")
+                tmp_rule.to_class(i)
+                self.add_permission(tmp_rule)
+
+        # prohibition
+        if "prohibition" in dict_data.keys():
+            for i in dict_data["prohibition"]:
+                tmp_rule = Rule("prohibition")
+                tmp_rule.to_class(i)
+                self.add_prohibition(tmp_rule)
+
+        # obligation
+        if "obligation" in dict_data.keys():
+            for i in dict_data["obligation"]:
+                tmp_rule = Rule("obligation")
+                tmp_rule.to_class(i)
+                self.add_obligation(tmp_rule)
 
 

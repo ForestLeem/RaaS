@@ -95,3 +95,63 @@ class Rule(object):
             merge_dict(tmp_duty, result)
 
         return {self.type: [result]}
+
+    def to_class(self, dict_data):
+
+        # asset
+        if "target" in dict_data.keys():
+            tmp_asset_list = dict_data["target"]
+            if type([]) == type(tmp_asset_list):
+                for i in tmp_asset_list:
+                    new_asset = Asset("target", tmp_asset_list[i])
+                    self.add_asset(new_asset)
+            else:
+                self.add_asset(Asset("target", tmp_asset_list))
+
+        # action
+        if "action" in dict_data.keys():
+            tmp_action = Action()
+            tmp_action.to_class(dict_data["action"])
+            self.action = tmp_action
+
+        # party
+        if "assignee" in dict_data.keys():
+            _assignee = Party("assignee", dict_data["assignee"])
+            self.add_party(_assignee)
+
+        if "assigner" in dict_data.keys():
+            _assigner = Party("assigner", dict_data["assigner"])
+            self.add_party(_assigner)
+
+        # constraint
+        if "constraint" in dict_data.keys():
+            for i_cons in dict_data["constraint"]:
+                tmp_cons = Constraint("constraint")
+                tmp_cons.leftOperand = i_cons["leftOperand"]
+                tmp_cons.operator = i_cons["operator"]
+                tmp_cons.rightOperand = i_cons["rightOperand"]
+                tmp_cons.unit = i_cons["unit"]
+                self.add_constraint(tmp_cons)
+
+        # duty permission
+        if "duty" in dict_data.keys():
+            for i_duty in dict_data["duty"]:
+                tmp_duty = Duty(2)
+                tmp_duty.to_class(i_duty)
+                self.add_duty(tmp_duty)
+
+        # remedy prohibition
+        if "remedy" in dict_data.keys():
+            for i_remedy in dict_data["remedy"]:
+                tmp_remedy = Duty(3)
+                tmp_remedy.to_class(i_remedy)
+                self.add_duty(tmp_remedy)
+
+        # consequence obligation
+        if "consequence" in dict_data.keys():
+            for i_consequence in dict_data["consequence"]:
+                tmp_consequence = Duty(4)
+                tmp_consequence.to_class(i_consequence)
+                self.add_duty(tmp_consequence)
+
+        pass
