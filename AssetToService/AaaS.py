@@ -61,8 +61,8 @@ def Constraint2QoS_c(_constraint):
 
 
 def Asset2Service(_policy):
+    result_service_list = []
     if isinstance(_policy, Policy.Policy):
-        result_service_list = []
         # generate service for each asset
         for tmp_asset in _policy.asset_list:
             # σ(ass:R.asset(C.Policy,C.Asset)) → ser:R.sla(C.Service,C.SLA)
